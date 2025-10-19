@@ -1,104 +1,124 @@
-"use client";
+import { useQuery } from "@tanstack/react-query";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, PlayCircle, Users, BookOpen, Award } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
+import { Star, Users, Clock } from "lucide-react";
 
-export function HeroSection() {
-  const router = useRouter();
+interface Course {
+  id: string;
+  title: string;
+  instructor: string;
+  imageUrl?: string;
+  badge?: string;
+  rating: number;
+  studentsEnrolled: number;
+  duration: string;
+  price: number;
+  originalPrice?: number;
+}
 
-  const handleGetStarted = () => {
-    const element = document.getElementById("batches");
-    if (element) element.scrollIntoView({ behavior: "smooth" });
-  };
+export function CoursesSection() {
+  const { data: courses = [], isLoading } = useQuery<Course[]>({
+    queryKey: ["/api/courses"],
+  });
 
-  const handleWatchDemo = () => {
-    console.log("Opening demo video...");
-  };
-
-  return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-black border-b border-gray-200/50">
-      {/* Subtle background accent */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="relative z-10 max-w-7xl w-full mx-auto px-6 py-24 text-center md:text-left md:flex md:items-center md:justify-between gap-12">
-        {/* Left Content */}
-        <div className="flex-1 space-y-7">
-          <Button
-            variant="outline"
-            className="text-sm font-medium bg-white border-gray-200 text-blue-700 dark:text-blue-400 px-4 py-2 rounded-full shadow-sm hover:shadow-md transition"
-          >
-            #1 AI‑enabled JEE & NEET Prep Platform
-          </Button>
-
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 dark:text-white leading-snug">
-            Accelerate your medical and engineering journey with{" "}
-            <span className="text-blue-600 dark:text-blue-400">
-              adaptive learning tools
-            </span>{" "}
-            and expert faculty.
-          </h1>
-
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-xl">
-            Personalized live classes, smart progress tracking, and doubt-solving 
-            with India’s top educators — built to help you master every concept.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 pt-4">
-            <Button
-              onClick={handleGetStarted}
-              className="bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold shadow-md px-7 py-4 transition-all"
-            >
-              Explore Courses
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
-
-            <Button
-              variant="outline"
-              onClick={handleWatchDemo}
-              className="border-gray-200 text-gray-700 hover:bg-gray-50 dark:text-white dark:hover:bg-gray-800 text-lg px-7 py-4"
-            >
-              <PlayCircle className="mr-2 w-5 h-5" />
-              Watch Demo
-            </Button>
-          </div>
-
-          {/* Stats Section */}
-          <div className="grid grid-cols-3 gap-6 pt-10 text-center md:text-left">
-            <div>
-              <div className="font-bold text-3xl text-gray-900 dark:text-white">
-                50K+
-              </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                Active Learners
-              </div>
-            </div>
-            <div>
-              <div className="font-bold text-3xl text-gray-900 dark:text-white">
-                98%
-              </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                Exam Success Rate
-              </div>
-            </div>
-            <div>
-              <div className="font-bold text-3xl text-gray-900 dark:text-white">
-                100+
-              </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                Expert Educators
-              </div>
-            </div>
+  if (isLoading) {
+    return (
+      <section className="py-16 bg-background" id="courses">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {[...Array(8)].map((_, i) => (
+              <Card key={i} className="h-96 animate-pulse bg-muted" />
+            ))}
           </div>
         </div>
+      </section>
+    );
+  }
 
-        {/* Right Side Illustration */}
-        <div className="hidden md:block flex-1 relative">
-          <div className="absolute inset-0 bg-gradient-to-tr from-blue-100 via-purple-100 to-transparent dark:from-blue-900/20 dark:via-purple-900/10 blur-2xl rounded-full" />
-          <img
-            src="https://blog.smartabroad.in/wp-content/uploads/2022/08/studying-student-on-desk.jpg"
-            alt="Students learning online"
-            className="relative z-10 rounded-2xl shadow-xl w-full object-cover"
-          />
+  return (
+    <section className="py-16 md:py-24 bg-background" id="courses">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12 md:mb-16">
+          <h2 className="font-poppins font-bold text-3xl md:text-4xl lg:text-5xl text-foreground mb-4">
+            Popular Courses
+          </h2>
+          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto">
+            Explore our most loved courses, designed by experts for your success
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {courses.map((course) => (
+            <Card
+              key={course.id}
+              className="group hover-elevate overflow-hidden transition-all duration-300 hover:shadow-xl cursor-pointer"
+              data-testid={`course-card-${course.id}`}
+            >
+              <CardHeader className="p-0 relative">
+                <div className="relative h-48 bg-gradient-to-br from-primary/20 to-chart-2/20 overflow-hidden" data-testid={`course-image-${course.id}`}>
+                  {course.imageUrl && (
+                    <img
+                      src={course.imageUrl}
+                      alt={course.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                  )}
+                  {course.badge && (
+                    <Badge
+                      className="absolute top-3 right-3 bg-primary text-primary-foreground font-semibold"
+                      data-testid={`badge-${course.badge.toLowerCase()}-${course.id}`}
+                    >
+                      {course.badge}
+                    </Badge>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent className="p-4 space-y-3">
+                <h3 className="font-poppins font-semibold text-lg text-foreground line-clamp-2 min-h-[56px]" data-testid={`course-title-${course.id}`}>
+                  {course.title}
+                </h3>
+                <div className="text-sm text-muted-foreground" data-testid={`course-instructor-${course.id}`}>
+                  by {course.instructor}
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-1" data-testid={`course-rating-${course.id}`}>
+                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    <span className="font-semibold">{course.rating}</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-muted-foreground" data-testid={`course-enrolled-${course.id}`}>
+                    <Users className="w-4 h-4" />
+                    <span>{course.studentsEnrolled.toLocaleString()}</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-muted-foreground" data-testid={`course-duration-${course.id}`}>
+                    <Clock className="w-4 h-4" />
+                    <span>{course.duration}</span>
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter className="p-4 pt-0 flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="font-poppins font-bold text-2xl text-primary" data-testid={`course-price-${course.id}`}>
+                    ₹{course.price}
+                  </span>
+                  {course.originalPrice && (
+                    <span className="text-muted-foreground line-through text-sm" data-testid={`course-original-price-${course.id}`}>
+                      ₹{course.originalPrice}
+                    </span>
+                  )}
+                </div>
+                <Button size="sm" data-testid={`button-enroll-${course.id}`}>
+                  Enroll Now
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+
+        <div className="text-center mt-12">
+          <Button size="lg" variant="outline" data-testid="button-view-all-courses">
+            View All Courses
+          </Button>
         </div>
       </div>
     </section>
